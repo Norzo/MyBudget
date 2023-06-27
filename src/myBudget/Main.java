@@ -22,17 +22,28 @@ public class Main
 		
 		// Create and set up the panels within the window
 		JPanel panel = new JPanel(new BorderLayout());
-		
+		frame.setSize(400,400);
+		frame.add(panel);
 		
 		// Create and add buttons/textfields to the window
-		JButton button = new JButton("Press");
+		JButton calculate = new JButton("Calculate");
 		JTextField inputSalary = new JTextField("Enter your monthly salary");
+		JTextField inputExpense = new JTextField("Enter your expense and press enter");
+		JLabel calculation = new JLabel("Calculation");
+		JLabel resultLabel = new JLabel("Result");
+		JList<Integer> expenseList = new JList<Integer>();
 		
-		button.setSize(50,50);
+		calculate.setSize(50,50);
 		inputSalary.setSize(20,50);
+		inputExpense.setSize(20,50);
+		expenseList.setSize(100, 100);
 		
-		frame.getContentPane().add(button, BorderLayout.SOUTH);
-		frame.getContentPane().add(inputSalary, BorderLayout.PAGE_START);
+		panel.add(calculate, BorderLayout.SOUTH);
+		panel.add(inputSalary, BorderLayout.PAGE_START);
+		panel.add(inputExpense, BorderLayout.EAST);
+		panel.add(calculation, BorderLayout.WEST);
+		panel.add(resultLabel, BorderLayout.WEST);
+		panel.add(expenseList, BorderLayout.EAST);
 		
 		frame.setVisible(true);
 	}
