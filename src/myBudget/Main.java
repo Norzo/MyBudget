@@ -2,11 +2,13 @@ package myBudget;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
 public class Main 
 {
+	static JList<Integer> expenseList = new JList<>();
 
 	public static void main(String[] args) 
 	{
@@ -36,7 +38,6 @@ public class Main
 		JTextField inputExpense = new JTextField("Enter your expense and press enter");
 		JLabel calculation = new JLabel("Calculation");
 		JLabel resultLabel = new JLabel("Result");
-		JList<Integer> expenseList = new JList<Integer>();
 		
 		calculate.setSize(50,50);
 		inputSalary.setSize(20,50);
@@ -50,6 +51,31 @@ public class Main
 		mainPanel.add(resultLabel);
 		
 		mainPanel.add(calculate);
+		
+		//Define Actions
+		Action storeValue = new AbstractAction()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						int tempNum;
+						String tempStr = inputSalary.getText();
+						
+						try
+						{
+							tempNum = Integer.valueOf(tempStr);
+						}
+						catch (NumberFormatException ex)
+						{
+							inputSalary.setText("Please input a number");
+							ex.printStackTrace();
+						}
+						
+						expenseList.addElement(tempNum);
+					}
+				};
+		
+		inputSalary.addActionListener(storeValue);
 		
 		frame.setVisible(true);
 	}
