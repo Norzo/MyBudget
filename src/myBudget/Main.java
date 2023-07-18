@@ -64,6 +64,7 @@ public class Main
 					public void actionPerformed(ActionEvent e)
 					{
 						setSalary(inputSalary.getText());
+						inputSalary.setText("");
 					}
 				};
 			
@@ -75,10 +76,11 @@ public class Main
 					{
 						// TODO Auto-generated method stub
 						saveExpense(inputExpense.getText());
+						inputExpense.setText("");
 					}
 				
 				};
-			
+		
 		Action calculateBudget = new AbstractAction()
 				{
 
@@ -86,7 +88,7 @@ public class Main
 					public void actionPerformed(ActionEvent e)
 					{
 						// TODO Auto-generated method stub
-						calculateAll();
+						calculateAll(resultLabel, calculation);
 					}
 			
 				};
@@ -108,9 +110,18 @@ public class Main
 		userExpenses.add(Integer.parseInt(input));
 	}
 	
-	static int calculateAll()
+	static void calculateAll(JLabel resultLabel, JLabel calculation)
 	{
+		int sumExpenses = 0;
 		
+		for (int i = 0; i < userExpenses.size(); i++)
+			sumExpenses += userExpenses.get(i);
+		
+		String remains = Integer.toString(userSalary - sumExpenses);
+		
+		calculation.setText("Salary - sum of expenses: " + Integer.toString(userSalary) + " - " + Integer.toString(sumExpenses));
+		
+		resultLabel.setText("Budget: " + remains);
 	}
 
 }
