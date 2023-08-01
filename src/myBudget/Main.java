@@ -1,6 +1,11 @@
 package myBudget;
 
 import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.JSONObject;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -12,7 +17,7 @@ public class Main
 {
 	static int userSalary;
 	
-	static List<Integer> userExpenses = new ArrayList<Integer>();
+	static DefaultListModel userExpensesModel = new DefaultListModel();
 
 	public static void main(String[] args) 
 	{
@@ -42,17 +47,17 @@ public class Main
 		JTextField inputExpense = new JTextField("Enter your expense and press enter");
 		JLabel calculation = new JLabel("Calculation");
 		JLabel resultLabel = new JLabel("Result");
-		JList<Integer> expenseList = new JList<>();
+		JList<Integer> expenseJList = new JList(userExpensesModel);
 		
 		calculate.setSize(50,50);
 		inputSalary.setSize(20,50);
 		inputExpense.setSize(20,50);
-		expenseList.setSize(100, 100);
+		expenseJList.setSize(100, 100);
 		
 		mainPanel.add(inputSalary);
 		mainPanel.add(inputExpense);
 		mainPanel.add(calculation);
-		mainPanel.add(expenseList);
+		mainPanel.add(expenseJList);
 		mainPanel.add(resultLabel);
 		
 		mainPanel.add(calculate);
@@ -97,6 +102,13 @@ public class Main
 		inputExpense.addActionListener(storeExpValue);
 		calculate.addActionListener(calculateBudget);
 		
+		try {
+			ChatGPT.foodBudgetGPT();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		frame.setVisible(true);
 	}
 	
@@ -107,15 +119,15 @@ public class Main
 	
 	static void saveExpense(String input)
 	{
-		userExpenses.add(Integer.parseInt(input));
+		userExpensesModel.addElement(Integer.parseInt(input));
 	}
 	
 	static void calculateAll(JLabel resultLabel, JLabel calculation)
 	{
 		int sumExpenses = 0;
 		
-		for (int i = 0; i < userExpenses.size(); i++)
-			sumExpenses += userExpenses.get(i);
+		for (int i = 0; i < userExpensesModel.size(); i++)
+			sumExpenses += Integer.parseInt(userExpensesModel.get(i).toString());
 		
 		String remains = Integer.toString(userSalary - sumExpenses);
 		
@@ -123,5 +135,35 @@ public class Main
 		
 		resultLabel.setText("Budget: " + remains);
 	}
+	
+	public class ChatGPT {
+	    public static void chatGPT(String text) throws Exception {
+	        String url = "https://api.openai.com/v1/completions";
+	        HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
 
+	        con.setRequestMethod("POST");
+	        con.setRequestProperty("Content-Type", "application/json");
+	        con.setRequestProperty("Authorization", "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");
+
+	        JSONObject data = new JSONObject();
+	        data.put("model", "gpt-3.5-turbo");
+	        data.put("prompt", text);
+	        data.put("max_tokens", 2000);
+	        data.put("temperature", 1.0);
+
+	        con.setDoOutput(true);
+	        con.getOutputStream().write(data.toString().getBytes());
+
+	        String output = new BufferedReader(new InputStreamReader(con.getInputStream())).lines()
+	                .reduce((a, b) -> a + b).get();
+
+	        System.out.println(new JSONObject(output).getJSONArray("choices").getJSONObject(0).getString("text"));
+	    }
+	    
+	    public static void foodBudgetGPT() throws Exception
+		{
+			chatGPT("Please write the monthly budget for food in Norway in NOK, numbers only.");
+		}
+	}
 }
+
